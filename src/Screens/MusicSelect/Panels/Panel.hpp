@@ -74,14 +74,26 @@ namespace MusicSelect {
     class SongPanel final : public SelectablePanel {
     public:
         explicit SongPanel(ScreenResources& t_resources, const std::shared_ptr<const Data::Song>& t_song) : SelectablePanel(t_resources), m_song(t_song) {};
+    
+        SongPanel(ScreenResources& t_resources, const std::shared_ptr<const Data::Song>& t_song, const std::string& locked_difficulty) :
+            SelectablePanel(t_resources),
+            m_song(t_song),
+            selected_chart(locked_difficulty),
+            m_difficulty_locked(true)
+        {};
+    
         void click(Ribbon& ribbon, const Input::Button& button) override;
         void unselect() override;
+
         std::optional<Data::SongDifficulty> get_selected_difficulty() const override;
+
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
         std::shared_ptr<const Data::Song> m_song;
         const Toolkit::AffineTransform<float> m_seconds_to_alpha{0.0f, 0.15f, 0.f, 255.f};
         std::optional<std::string> selected_chart;
+        bool m_difficulty_locked { false };
     };
 
     void set_to_global_bounds(sf::RectangleShape& rect, const sf::Text& text);

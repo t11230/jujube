@@ -65,36 +65,58 @@ namespace MusicSelect {
     }
 
     void SongPanel::click(Ribbon&, const Input::Button&) {
-        if (selected_chart.has_value()) {
-            // The song was already selected : look for the next chart in order
-            auto it = m_song->chart_levels.upper_bound(*selected_chart);
-            if (it != m_song->chart_levels.cend()) {
-                selected_chart = it->first;
-            } else {
-                selected_chart = m_song->chart_levels.cbegin()->first;
-            }
-            resources.selected_panel->last_click.restart();
-            resources.selected_panel->is_first_click = false;
-        } else {
-            // Look for the first chart with dif greater or equal to the last select one
-            // or else select the first chart
-            auto it = m_song->chart_levels.lower_bound(resources.get_last_selected_difficulty());
-            if (it != m_song->chart_levels.cend()) {
-                selected_chart = it->first;
-            } else {
-                selected_chart = m_song->chart_levels.cbegin()->first;
-            }
-            // The song was not selected before : first unselect the last one
-            if (resources.selected_panel.has_value()) {
+        const auto last_selected_diff = resources.get_last_selected_difficulty();
+
+        if (resources.selected_panel) {
+            if (&resources.selected_panel->obj != dynamic_cast<SelectablePanel*>(this)) {
+                // The song was not selected before : unselect the last one
                 resources.selected_panel->obj.unselect();
+                resources.selected_panel.reset();
+            } else {
+                // Otherwise, this panel was already selected : look for the next chart in order (unless locked)
+                if (!m_difficulty_locked) {
+                    auto it = m_song->chart_levels.upper_bound(*selected_chart);
+                    if (it != m_song->chart_levels.cend()) {
+                        selected_chart = it->first;
+                    } else {
+                        selected_chart = m_song->chart_levels.cbegin()->first;
+                    }
+                }
+
+                resources.selected_panel->last_click.restart();
+                resources.selected_panel->is_first_click = false;
             }
+        }
+
+        if (!resources.selected_panel) {
+            // Selecting this panel for the first time
+
+            if (m_difficulty_locked) {
+                if (!selected_chart) {
+                    // Select the first chart if we are missing a difficulty while locked
+                    selected_chart = m_song->chart_levels.cbegin()->first;
+                }
+            } else {
+                // Select a difficulty based on the last global one
+                auto it = m_song->chart_levels.lower_bound(last_selected_diff);
+                if (it != m_song->chart_levels.cend()) {
+                    selected_chart = it->first;
+                } else {
+                    selected_chart = m_song->chart_levels.cbegin()->first;
+                }
+            }
+
+            // Select this panel and play the preview
             resources.selected_panel.emplace(*this);
             resources.music_preview.play(m_song->full_audio_path(), m_song->preview);
         }
+
     }
 
     void SongPanel::unselect() {
-        selected_chart.reset();
+        if (!m_difficulty_locked) {
+            selected_chart.reset();
+        }
     }
 
     std::optional<Data::SongDifficulty> SongPanel::get_selected_difficulty() const {
@@ -107,9 +129,14 @@ namespace MusicSelect {
 
     void SongPanel::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         states.transform *= getTransform();
-        auto last_selected_chart = resources.get_last_selected_difficulty();
+        auto last_selected_diff = resources.get_last_selected_difficulty();
+
+        if (m_difficulty_locked and selected_chart) {
+            last_selected_diff = *selected_chart;
+        }
+
         // We should gray out the panel if the currently selected difficulty doesn't exist for this song
-        bool should_be_grayed_out = m_song->chart_levels.find(last_selected_chart) == m_song->chart_levels.end();
+        bool should_be_grayed_out = m_song->chart_levels.find(last_selected_diff) == m_song->chart_levels.end();
         if (m_song->cover) {
             auto loaded_texture = shared.covers.async_get(m_song->folder/m_song->cover.value());
             if (loaded_texture) {
@@ -134,12 +161,12 @@ namespace MusicSelect {
             chart_dif_badge.setFillColor(sf::Color(128,128,128));
         } else {
             chart_dif_badge.setFillColor(
-                shared.get_chart_color(last_selected_chart)
+                shared.get_chart_color(last_selected_diff)
             );
         }
         target.draw(chart_dif_badge, states);
         if (not should_be_grayed_out) {
-            auto dif = m_song->chart_levels.at(last_selected_chart);
+            auto dif = m_song->chart_levels.at(last_selected_diff);
             sf::Text dif_label{
                 std::to_string(dif),
                 shared.fallback_font.black,

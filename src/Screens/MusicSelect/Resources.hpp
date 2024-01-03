@@ -13,6 +13,7 @@ namespace MusicSelect {
         ScreenResources(Resources::SharedResources& r) : Resources::HoldsSharedResources(r) {}
 
         std::optional<Resources::Timed<SelectablePanel>> selected_panel;
+
         std::string get_last_selected_difficulty();
         std::optional<std::string> get_selected_difficulty();
         std::optional<std::reference_wrapper<const Data::Song>> get_selected_song();

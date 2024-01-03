@@ -39,4 +39,11 @@ namespace MusicSelect {
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };
+
+    class SortButton final : public sf::Drawable, public sf::Transformable, public HoldsResources {
+    public:
+        using HoldsResources::HoldsResources;
+    private:
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    };
 }
