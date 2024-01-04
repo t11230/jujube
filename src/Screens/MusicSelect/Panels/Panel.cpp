@@ -11,13 +11,13 @@
 
 namespace MusicSelect {
     Panel::Panel(ScreenResources& t_resources) : HoldsResources(t_resources) {
-        
+
     }
 
     float Panel::get_size() const {
         return get_panel_size();
     }
-    
+
     void ColorPanel::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         sf::RectangleShape panel{{get_size()*0.9f, get_size()*0.9f}};
         panel.setFillColor(m_color);
@@ -81,10 +81,10 @@ namespace MusicSelect {
                     } else {
                         selected_chart = m_song->chart_levels.cbegin()->first;
                     }
-                }
 
-                resources.selected_panel->last_click.restart();
-                resources.selected_panel->is_first_click = false;
+                    resources.selected_panel->last_click.restart();
+                    resources.selected_panel->is_first_click = false;
+                }
             }
         }
 

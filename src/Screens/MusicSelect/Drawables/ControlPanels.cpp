@@ -111,7 +111,7 @@ namespace MusicSelect {
 
     void SortButton::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         states.transform *= getTransform();
-        
+
         sf::RectangleShape tint{{get_panel_size(), get_panel_size()}};
         tint.setFillColor(sf::Color(0,0,0,178));
         target.draw(tint, states);
@@ -133,7 +133,7 @@ namespace MusicSelect {
         Toolkit::set_local_origin_normalized(category_label_upper, 0.5f, 0.5f);
         category_label_upper.setPosition(get_panel_size()*0.5f, get_panel_size()*0.15f);
         target.draw(category_label_upper, states);
-        
+
         sf::Text category_label_lower{
             "SELECT",
             shared.fallback_font.medium,
@@ -143,5 +143,21 @@ namespace MusicSelect {
         Toolkit::set_local_origin_normalized(category_label_lower, 0.5f, 0.5f);
         category_label_lower.setPosition(get_panel_size()*0.5f, get_panel_size()*0.25f);
         target.draw(category_label_lower, states);
+
+        sf::RectangleShape bar{{get_panel_size()*0.8f, get_panel_size()*0.01f}};
+        bar.setFillColor(sf::Color::White);
+        Toolkit::set_origin_normalized(bar, 0.5f, 0.5f);
+        bar.setPosition(get_panel_size()*0.5f, get_panel_size()*0.5f);
+        target.draw(bar, states);
+
+        sf::Text label{
+            m_label,
+            shared.fallback_font.medium,
+            static_cast<unsigned int>(get_panel_size()*0.1f)
+        };
+        label.setFillColor(sf::Color::White);
+        Toolkit::set_local_origin_normalized(label, 0.5f, 0.5f);
+        label.setPosition(get_panel_size()*0.5f, get_panel_size()*0.7f);
+        target.draw(label, states);
     }
 }

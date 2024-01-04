@@ -34,7 +34,7 @@ namespace MusicSelect {
         main_option_page(t_resources),
         options_button(t_resources),
         start_button(t_resources),
-        sort_button(t_resources)
+        sort_button(t_resources, to_string(song_ordering))
     {
         panel_filter.setFillColor(sf::Color(0,0,0,200));
         std::cout << "loaded MusicSelect::Screen" << '\n';
@@ -226,6 +226,7 @@ namespace MusicSelect {
             } else {
                 song_ordering = SongOrdering::Title;
             }
+            sort_button.set_label(to_string(song_ordering));
             ribbon.set_layout(get_panel_layout(song_list, resources, song_ordering));
             break;
         case Input::Button::B15: // Options Menu
@@ -276,7 +277,7 @@ namespace MusicSelect {
             preferences.screen.video_mode.height = window.getSize().y;
         } break;
         default:
-            throw std::runtime_error("wtf ?");
+            throw std::runtime_error("Unknown DisplayStyle");
         }
     }
 
@@ -298,10 +299,10 @@ namespace MusicSelect {
     std::string to_string(SongOrdering ordering) {
         switch (ordering) {
         case SongOrdering::Title:
-            return "Title";
+            return "TITLE";
         case SongOrdering::Level:
-            return "Level";
+            return "LEVEL";
         }
-        throw std::runtime_error("Unknown PanelOrdering");
+        throw std::runtime_error("Unknown SongOrdering");
     }
 }
