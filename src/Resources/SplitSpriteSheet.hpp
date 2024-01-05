@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <ghc/filesystem.hpp>
 #include <nlohmann/json.hpp>
 #include <SFML/Graphics/Texture.hpp>

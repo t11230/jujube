@@ -21,8 +21,16 @@
 #include "Drawables/ControlPanels.hpp"
 
 namespace MusicSelect {
+    
+    enum class SongOrdering {
+        Title,
+        Level,
+    };
+
+    std::string to_string(SongOrdering ordering);
 
     class SongPanel;
+
     // The music select screen is created only once
     // it loads a cache of available songs in the song_list attribute
     class Screen : public Toolkit::Debuggable, public HoldsResources {
@@ -31,6 +39,8 @@ namespace MusicSelect {
         std::optional<Data::SongDifficulty> select_chart(sf::RenderWindow& window);
         void draw_debug(sf::RenderWindow& window);
     private:
+        SongOrdering song_ordering { SongOrdering::Title };
+
         const Data::SongList song_list;
 
         Ribbon ribbon;
@@ -38,6 +48,7 @@ namespace MusicSelect {
         MainOptionPage main_option_page;
         OptionsButton options_button;
         StartButton start_button;
+        SortButton sort_button;
         bool chart_selected = false;
 
         sf::RectangleShape panel_filter;

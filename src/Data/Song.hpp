@@ -23,7 +23,6 @@ namespace Data {
     * Difficulty name ordering : BSC > ADV > EXT > anything else in lexicographical order
     */
     struct cmp_dif_name {
-        std::map<std::string,int> dif_names = {{"BSC",1},{"ADV",2},{"EXT",3}};
         bool operator()(const std::string& a, const std::string& b) const;
     };
 
@@ -48,12 +47,28 @@ namespace Data {
         static bool sort_by_title(const Data::Song& a, const Data::Song& b) {
             return a.title < b.title;
         }
+
+        static bool order_by_level(const Data::Song& a, const Data::Song& b, const std::string& difficulty) {
+            auto a_level = a.chart_levels.find(difficulty);
+            auto b_level = b.chart_levels.find(difficulty);
+
+            if (a_level == a.chart_levels.end() && b_level == b.chart_levels.end()) {
+                return a.title < b.title;
+            } else if (a_level == a.chart_levels.end()) {
+                return false;
+            } else if (b_level == b.chart_levels.end()) {
+                return true;
+            } else {
+                return a_level->second < b_level->second;
+            }
+        }
+
         virtual ~Song() = default;
     };
 
     struct SongDifficulty {
         const Data::Song& song;
-        const std::string& difficulty;
+        const std::string difficulty;
 
         std::optional<Chart> get_chart() const {return song.get_chart(difficulty);};
 

@@ -10,21 +10,35 @@
 
 namespace fs = ghc::filesystem;
 
+namespace {
+    std::optional<int> difficulty_to_ordinal(const std::string& difficulty) {
+        if (difficulty == "BSC") {
+            return 0;
+        } else if (difficulty == "ADV") {
+            return 1;
+        } else if (difficulty == "EXT") {
+            return 2;
+        } else {
+            return {};
+        }
+    }
+}
+
 namespace Data {
 
     bool cmp_dif_name::operator()(const std::string &a, const std::string &b) const {
-        if (dif_names.find(a) != dif_names.end()) {
-            if (dif_names.find(b) != dif_names.end()) {
-                return dif_names.find(a)->second < dif_names.find(b)->second;
-            } else {
-                return true;
-            }
+        // Difficulty name ordering : BSC > ADV > EXT > anything else in lexicographical order
+        auto a_ord = difficulty_to_ordinal(a);
+        auto b_ord = difficulty_to_ordinal(b);
+
+        if (a_ord and b_ord) {
+            return a_ord.value() < b_ord.value();
+        } else if (a_ord) {
+            return true;
+        } else if (b_ord) {
+            return false;
         } else {
-            if (dif_names.find(b) != dif_names.end()) {
-                return false;
-            } else {
-                return a < b;
-            }
+            return a < b;
         }
     }
 

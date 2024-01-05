@@ -47,6 +47,7 @@ namespace MusicSelect {
         void move_right();
         void move_left();
         void move_to_next_category(const Input::Button& button);
+        void set_layout(PanelLayout layout);
         void draw_debug() override;
         virtual ~Ribbon() = default;
     protected:

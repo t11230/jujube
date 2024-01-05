@@ -2,6 +2,7 @@
 
 #include <string>
 #include <map>
+#include <optional>
 
 #include <ghc/filesystem.hpp>
 #include <SFML/Graphics.hpp>

@@ -9,6 +9,7 @@ https://github.com/Stepland/memon
 #define MEMON_HPP_
 
 #include <cassert>
+#include <optional>
 #include <set>
 #include <vector>
 

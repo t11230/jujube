@@ -149,6 +149,16 @@ namespace MusicSelect {
         }
     }
 
+    void Ribbon::set_layout(PanelLayout layout) {
+        if (resources.selected_panel) {
+            resources.selected_panel->obj.unselect();
+        }
+        resources.selected_panel.reset();
+
+        m_layout = layout;
+        std::cout << "Changed MusicSelect::Ribbon::m_layout" << '\n';
+    }
+
     void Ribbon::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         states.transform *= getTransform();
 
